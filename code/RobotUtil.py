@@ -23,7 +23,7 @@ def rpyxyz2H(rpy,xyz):
             [0,0,0,1]]
 
 	H=np.matmul(np.matmul(np.matmul(Ht,Hx),Hy),Hz)
-
+	
 	return H
 
 def R2axisang(R):
@@ -58,9 +58,49 @@ def BlockDesc2Points(H, Dim):
 
 def CheckPointOverlap(pointsA,pointsB,axis):
 	# check if points are overlapping
+	# project points
+	proj_points_A = np.matmul(axis, np.transpose(pointsA))
+	proj_points_B = np.matmul(axis, np.transpose(pointsB))
+
+	# Check overlap
+	maxA , minA = np.max(proj_points_A), np.min(proj_points_A)
+	maxB , minB = np.max(proj_points_B), np.min(proj_points_B)
+
+	if maxA <= maxB and maxA >= minB:
+		return True
+	
+	elif maxB <= maxA and maxB >= minA:
+		return True
+	
+	elif minA <= maxB and minA >= minB:
+		return True
+
+	elif minB <= maxA and minB >= minA:
+		return True 
+
+	return False
 
 
 def CheckBoxBoxCollision(pointsA,axesA,pointsB,axesB):
 	# check collision between two boxes
+
+	# sphere check 
+	if np.linalg.norm(pointsA[0] - pointsB[0]) > np.linalg.norm(pointsA[0] - pointsA[1]) + np.linalg.norm(pointsB[0] - pointsB[1]):
+		return False
+	
+	# surface normal check
+	for i in range(3):
+		if not CheckPointOverlap(pointsA=pointsA, pointsB=pointsB, axis=axesA[i]):
+			return False
+		if not CheckPointOverlap(pointsA=pointsA, pointsB=pointsB, axis=axesB[i]):
+			return False
+	
+	# edge to edge check
+	for i in range(3):
+		for j in range(3):
+			if not CheckPointOverlap(pointsA=pointsA, pointsB=pointsB, axis=np.cross(axesA[i], axesB[j])):
+				return False
+	
+	return True
 
 	
