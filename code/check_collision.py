@@ -23,10 +23,8 @@ def test_fn(test, reference_corners, reference_axes):
     box_H = rt.rpyxyz2H(box_orient, box_origin)
     box_corners, box_axes = rt.BlockDesc2Points(box_H, box_dim)
     
-    for box_corner in box_corners:
-        for reference_corner in reference_corners:
-            if rt.CheckBoxBoxCollision(box_corner,box_axes,reference_corner,reference_axes):
-                return True
+    if rt.CheckBoxBoxCollision(box_corners,box_axes,reference_corners,reference_axes):
+        return True
     return False
 
 ans = ['Yes' if test_fn(test,reference_corners, reference_axes) else 'No' for test in test_cases]
