@@ -69,11 +69,23 @@ def main(args):
 	while prevstep:
 		plan.insert(0, prevstep)
 		prevstep = parent[plan[0]]
+
 	print ("Plan: ", plan)
 	MyPlan=[]
 	MyPlan.append(qInit)
 	for i in range(len(plan)):
-		MyPlan.append(prmVertices[plan[i]])
+		if args.interpolate:
+			start_point = MyPlan[-1]
+			end_point = prmVertices[plan[i]]
+			directional_vector = np.array(end_point) - np.array(start_point)
+			steps = 10
+			directional_vector = directional_vector / steps
+			for i in range(steps):
+				start_point = MyPlan[-1]
+				MyPlan.append(start_point + directional_vector)
+		else:
+			MyPlan.append(prmVertices[plan[i]])
+
 	MyPlan.append(qGoal)
 
 	if args.use_pyrobot:
@@ -88,6 +100,9 @@ def main(args):
 		for q in MyPlan:
 			robot.arm.set_joint_positions(q)
 
+	elif args.show_time_history:
+		mybot.PlotTJoints(MyPlan)
+
 	else:
 		# Visualize your Plan in matplotlib
 		for q in MyPlan:
@@ -96,5 +111,7 @@ def main(args):
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--use_pyrobot', type=bool, default=False)
+	parser.add_argument('--interpolate', type=bool, default=True)
+	parser.add_argument('--show_time_history', type=bool, default=True)
 	args = parser.parse_args()
 	main(args)

@@ -224,6 +224,28 @@ class Locobot:
 
 		return False
 
+	def PlotTJoints(self, MyPlan):
+		#create figure
+		fig=plt.figure()
+		ax = fig.add_subplot(111)
+		
+		joint_dict = {}
+		for dt in range(len(MyPlan)):
+			q = MyPlan[dt]
+			for joint_num in range(len(q)):
+				if joint_num not in joint_dict:
+					joint_dict[joint_num] = []
+
+				joint_dict[joint_num].append(q[joint_num])
+
+		dt = [i for i in range(len(MyPlan))]
+		for key, val in joint_dict.items():
+			ax.plot(dt, val, label = 'Joint ' + str(key))
+			ax.legend()
+		
+		plt.show()
+		return fig, ax
+
 	def PlotCollisionBlockPoints(self,ang,pointsObs=[]):
 		# This is a plotting function to visualize you robot with obstacles
 
