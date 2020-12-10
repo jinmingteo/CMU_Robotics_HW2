@@ -4,7 +4,11 @@
 python check_collision.py
 ```
 
-Output: ['No', 'Yes', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'Yes']
+Output: 
+
+```
+['No', 'Yes', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'Yes']
+```
 
 ## Q3
 
